@@ -1,5 +1,6 @@
 FROM quay.io/bgruening/docker-jupyter-notebook:21.10
 ARG GIT_REPO
+ENV R_LIBS_SITE="/usr/local/lib/R/site-library:/usr/lib/R/site-library:/usr/lib/R/library"
 RUN conda remove --force-remove -y _libgcc_mutex _r-mutex \
     binutils_impl_linux-64 binutils_linux-64 gcc_impl_linux-64 gcc_linux-64 \
     gfortran_impl_linux-64 gfortran_linux-64 gxx_impl_linux-64 gxx_linux-64 \
@@ -36,12 +37,9 @@ RUN conda remove --force-remove -y _libgcc_mutex _r-mutex \
     sudo apt install r-base libudunits2-dev libproj-dev libgdal-dev libjq-dev -y && \
     curl https://raw.githubusercontent.com/Bioconductor/bioconductor_docker/master/bioc_scripts/install_bioc_sysdeps.sh -o /tmp/install_deps.sh && \
     sh /tmp/install_deps.sh && Rscript -e 'install.packages("IRkernel"); install.packages("BiocManager");' && \
-    Rscript -e 'BiocManager::install("remotes"); BiocManager::install("forcats")' && \
-    Rscript -e 'if(BiocManager::install("geojsonio", dependencies = TRUE) %in% rownames(installed.packages())) q(status = 0) else q(status = 1)' && \
-    curl https://raw.githubusercontent.com/rocker-org/rocker-versioned2/master/scripts/install_quarto.sh | bash
-
-USER jovyan
-RUN echo $GIT_REPO > /home/jovyan/gitrepo && REPONAME=$(echo $GIT_REPO | awk -F'/' '{print $NF}'); git clone https://github.com/${GIT_REPO} /home/jovyan/$REPONAME && cd /home/jovyan/$REPONAME && ls vignettes/* | grep ".qmd" | xargs -i bash .github/scripts/install_missing.sh {}
+    Rscript -e 'BiocManager::install("remotes"); BiocManager::install("forcats")' &&\
+    curl https://raw.githubusercontent.com/rocker-org/rocker-versioned2/master/scripts/install_quarto.sh | bash &&\
+    echo $GIT_REPO > /home/jovyan/gitrepo && REPONAME=$(echo $GIT_REPO | awk -F'/' '{print $NF}'); git clone https://github.com/${GIT_REPO} /home/jovyan/$REPONAME && cd /home/jovyan/$REPONAME && ls vignettes/* | grep ".qmd" | xargs -i bash .github/scripts/install_missing.sh {} && chown -R 1000:100 /home/jovyan 
 
 ENV CC=/usr/bin/gcc
 ENV CXX=/usr/bin/g++

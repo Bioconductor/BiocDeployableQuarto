@@ -20,10 +20,10 @@ jobs:
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-          LONGNAME=$REPOSITORY_DESCRIPTION
-          SHORTNAME=$(echo ${{github.repository}} | awk -F'/' '{print $NF}')
-          REPOSITORY=${{github.repository}}
-          BRANCH=${GITHUB_REF#refs/heads/}
+          LONGNAME="$REPOSITORY_DESCRIPTION"
+          SHORTNAME="$(echo ${{github.repository}} | awk -F'/' '{print tolower($NF)}')"
+          REPOSITORY="$(echo ${{github.repository}} | awk '{print tolower($0)}')"
+          BRANCH="${GITHUB_REF#refs/heads/}"
 
           sed -i "s#almahmoud/BiocDeployableQuarto#$REPOSITORY#g" README.md
           sed -i "s#-main#-$BRANCH#g" README.md
@@ -96,6 +96,29 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: "Repository metadata"
+        uses: varunsridharan/action-repository-meta@main
+        with:
+          REPOSITORY: ${{github.repository}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+          LONGNAME="$REPOSITORY_DESCRIPTION"
+          SHORTNAME="$(echo ${{github.repository}} | awk -F'/' '{print $NF}')"
+          REPOSITORY="${{github.repository}}"
+          BRANCH="${GITHUB_REF#refs/heads/}"
+
+          bash generate_wrapper.sh "$LONGNAME" "$SHORTNAME" "$REPOSITORY" "$BRANCH" "biocrstudio"
+          
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Generated Galaxy wrappers on $(echo $(date +'%m-%d-%y-%H-%M-%S'))"
+          git push
+
   buildgxyjupyter:
     name: Build Galaxy Jupyter image
     runs-on: ubuntu-latest
@@ -126,6 +149,28 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      - name: "Repository metadata"
+        uses: varunsridharan/action-repository-meta@main
+        with:
+          REPOSITORY: ${{github.repository}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+          LONGNAME="$REPOSITORY_DESCRIPTION"
+          SHORTNAME="$(echo ${{github.repository}} | awk -F'/' '{print $NF}')"
+          REPOSITORY="${{github.repository}}"
+          BRANCH="${GITHUB_REF#refs/heads/}"
+
+          bash generate_wrapper.sh "$LONGNAME" "$SHORTNAME" "$REPOSITORY" "$BRANCH" "gxyjupyter"
+          
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Generated Galaxy wrappers on $(echo $(date +'%m-%d-%y-%H-%M-%S'))"
+          git push
+
   buildanvilrstudio:
     name: Build AnVIL RStudio image
     runs-on: ubuntu-latest
