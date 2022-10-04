@@ -1,0 +1,73 @@
+---
+title: "OSN_example: demonstrate usage of Open Storage Network resources for multiplex imaging data"
+author: 
+  - Vincent J. Carey, stvjc at channing.harvard.edu
+  - Ludwig Geistlinger, ludwig_geistlinger at hms.harvard.edu
+  - Alex Mahmoud, almahmoud at channing.harvard.edu
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+format: 
+  html:
+    code-fold: true
+  ipynb:
+    execute:
+      echo: true
+      eval: true
+---
+
+# Introduction
+
+The purpose of this vignette is to briefly describe access to a
+tissue microarray dataset lodged in the NSF ACCESS Open Storage
+Network (OSN).
+
+# TMA11
+
+## Synapse repository
+
+This [Synapse](https://www.synapse.org) repository contains
+data related to the MCMICRO system as described in
+a recent [Nature Methods paper](https://doi.org/10.1038/s41592-021-01308-y).
+
+```
+https://www.synapse.org/#!Synapse:syn22345749
+```
+
+## OSN address and query
+
+```
+You can browse the TMA11 data at the following address: https://mghp.osn.xsede.org/bir190004-bucket01/index.html#TMA11/
+```
+
+The data is free and publicly accessible and can be downloaded locally or accessed remotely.
+
+### Python Example
+
+In python, the fifth core in the array can be read using
+```{python}
+import s3fs
+import zarr
+fs = s3fs.S3FileSystem(anon=True, key="dummy", secret="dummy", 
+    client_kwargs={'endpoint_url': "https://mghp.osn.xsede.org/"})
+mapper = fs.get_mapper('bir190004-bucket01/TMA11/zarr/5.zarr')
+zarr.load(mapper)
+```
+
+### R example
+
+In R, the following can be used, once zarr's python library
+has been installed in the appropriate python distribution.
+
+```{r}
+library(reticulate)
+s3fs = import("s3fs")
+zr = import("zarr")
+fs = s3fs$S3FileSystem(anon='True', key="dummy", secret="dummy",
+    client_kwargs=list(endpoint_url = 'https://mghp.osn.xsede.org/'))
+mapper = fs$get_mapper('bir190004-bucket01/TMA11/zarr/5.zarr')
+c5 = zr$load(mapper)
+dim(c5)
+```
+
+On a decent network connection the load takes under 20 seconds. This can also vary based on your geographical proximity to the hosting pods. The data is hosted on the Open Storage Network in the United States.
+
+The R array c5 serializes to about 1 GB of numeric data (64 x 3007 x 3007).
