@@ -39,7 +39,7 @@ RUN conda remove --force-remove -y _libgcc_mutex _r-mutex \
     sh /tmp/install_deps.sh && Rscript -e 'install.packages("IRkernel"); install.packages("BiocManager");' && \
     Rscript -e 'BiocManager::install("remotes"); BiocManager::install("forcats")' &&\
     curl https://raw.githubusercontent.com/rocker-org/rocker-versioned2/master/scripts/install_quarto.sh | bash &&\
-    echo $GIT_REPO > /home/jovyan/gitrepo && REPONAME=$(echo $GIT_REPO | awk -F'/' '{print $NF}'); git clone https://github.com/${GIT_REPO} /home/jovyan/$REPONAME && cd /home/jovyan/$REPONAME && ls vignettes/* | grep ".qmd" | xargs -i bash .github/scripts/install_missing.sh {} && chown -R 1000:100 /home/jovyan 
+    echo $GIT_REPO > /home/jovyan/gitrepo && REPONAME=$(echo $GIT_REPO | awk -F'/' '{print $NF}'); git clone https://github.com/${GIT_REPO} /home/jovyan/$REPONAME && cd /home/jovyan/$REPONAME && ls vignettes/* | grep ".qmd" | xargs -i bash .github/scripts/install_missing.sh {} && chown -R 1000:100 /home/jovyan && chown -R 1000:100 /usr/local/lib/R/site-library && chown -R 1000:100 /usr/lib/R/library
 
 ENV CC=/usr/bin/gcc
 ENV CXX=/usr/bin/g++

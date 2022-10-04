@@ -111,7 +111,7 @@ jobs:
           REPOSITORY="${{github.repository}}"
           BRANCH="${GITHUB_REF#refs/heads/}"
 
-          bash generate_wrapper.sh "$LONGNAME" "$SHORTNAME" "$REPOSITORY" "$BRANCH" "biocrstudio"
+          bash .github/scripts/generate_wrapper.sh "$LONGNAME" "$SHORTNAME" "$REPOSITORY" "$BRANCH" "biocrstudio"
           
           git config user.name github-actions
           git config user.email github-actions@github.com
@@ -163,7 +163,7 @@ jobs:
           REPOSITORY="${{github.repository}}"
           BRANCH="${GITHUB_REF#refs/heads/}"
 
-          bash generate_wrapper.sh "$LONGNAME" "$SHORTNAME" "$REPOSITORY" "$BRANCH" "gxyjupyter"
+          bash .github/scripts/generate_wrapper.sh "$LONGNAME" "$SHORTNAME" "$REPOSITORY" "$BRANCH" "gxyjupyter"
           
           git config user.name github-actions
           git config user.email github-actions@github.com
