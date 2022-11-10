@@ -1,6 +1,7 @@
 name: Quarto rendering and Docker building
 on:
   push: {}
+  workflow_dispatch: {}
 
 jobs:
   quartotests:
