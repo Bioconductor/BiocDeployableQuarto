@@ -8,7 +8,7 @@ This is a BiocDeployable template repository, notably for rendering and deployin
 
 #### Source QMD files
 
-In the [`vignettes/`](./vignettes) directory, you fill find the source Quarto Markdown (.qmd) files,
+In the [`vignettes/`](./vignettes) directory, you will find the source Quarto Markdown (.qmd) files,
 representing the material to be rendered and deployed.
 
 By default, this repository will have an example file containing both R and Python code.
