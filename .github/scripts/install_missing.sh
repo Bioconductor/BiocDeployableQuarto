@@ -9,7 +9,7 @@ do
     if [[ -s /tmp/rmissingpkg ]]; then
         RPKG=$(awk '{print $NF}' /tmp/rmissingpkg)
         # Install missing R package
-        Rscript -e "if (!require('rspm')) install.packages('rspm'); rspm::enable(); BiocManager::install($RPKG)" && rm /tmp/rmissingpkg
+        Rscript -e "BiocManager::install($RPKG)" && rm /tmp/rmissingpkg
         # Link reticulate with existing python3
         if [ $RPKG == "'reticulate'" ]; then Rscript -e "library(reticulate); use_python('$(which python3)')"; fi
         
