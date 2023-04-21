@@ -3,7 +3,7 @@ QMD=$(realpath "$1")
 echo $QMD
 mkdir -p /tmp
 # Extract missing R pkg or Python module from quarto error message
-while ( quarto render $QMD --to html 3>&1 1>&2- 2>&3- ) | grep "Error in loadNamespace(x) : there is no package called" > /tmp/rmissingpkg \
+while ( quarto render $QMD --to html 3>&1 1>&2- 2>&3- ) | grep "there is no package called" > /tmp/rmissingpkg \
  || ( quarto render $QMD --to html 3>&1 1>&2- 2>&3- ) | grep "ModuleNotFoundError: No module named" > /tmp/pymissingmodule;
 do
     if [[ -s /tmp/rmissingpkg ]]; then
