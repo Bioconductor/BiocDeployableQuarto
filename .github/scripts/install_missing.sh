@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x
+
 QMD=$(realpath "$1")
 echo $QMD
 mkdir -p /tmp
@@ -9,7 +11,7 @@ do
     if [[ -s /tmp/rmissingpkg ]]; then
         RPKG=$(awk '{print $NF}' /tmp/rmissingpkg)
         # Install missing R package
-        Rscript -e "BiocManager::install($RPKG)" && rm /tmp/rmissingpkg
+        Rscript -e "BiocManager::install('$(echo "${RPKG:1:${#RPKG}-2}")')" && rm /tmp/rmissingpkg
         # Link reticulate with existing python3
         if [ $RPKG == "'reticulate'" ]; then Rscript -e "library(reticulate); use_python('$(which python3)')"; fi
         
